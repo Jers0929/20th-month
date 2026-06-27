@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Twenty Months</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+font-family:'Cormorant Garamond',serif;
+background:#ebe6dc;
+color:#2d2d2d;
+min-height:100vh;
+}
+body:before{
+content:"";
+position:fixed;
+inset:0;
+pointer-events:none;
+opacity:.015;
+
+background-image:
+radial-gradient(
+rgba(0,0,0,.15) 0.5px,
+transparent 0.5px
+);
+
+background-size:12px 12px;
+}
+header{text-align:center;padding:70px 20px}
+h1{
+font-size:3rem;
+letter-spacing:4px;
+font-weight:500;
+}
+.subtitle{color:#8b6f47;margin-top:10px}
+.counter{
+display:inline-block;
+
+margin-top:25px;
+
+padding:16px 28px;
+
+background:#fdfbf7;
+
+border:1px solid rgba(139,111,71,.12);
+
+border-radius:16px;
+
+box-shadow:
+0 5px 15px rgba(0,0,0,.04);
+}
+#daysTogether{font-size:2rem;color:#8b6f47;font-weight:bold}
+.gallery{max-width:1200px;margin:auto;padding:20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:20px}
+.card{
+background: #ebe6dc;
+
+
+border-radius:14px;
+
+padding:30px;
+
+text-align:center;
+
+cursor:pointer;
+
+border:1px solid rgba(139,111,71,.12);
+
+box-shadow:
+0 2px 8px rgba(0,0,0,.04);
+
+transition:.3s;
+}
+
+.card:hover{
+transform:translateY(-4px);
+
+box-shadow:
+0 10px 25px rgba(0,0,0,.08);
+
+border-color:#8b6f47;
+}
+.modal{display:none;position:fixed;inset:0;background:rgba(244,239,230,.92);justify-content:center;align-items:center;padding:20px}
+.letter-box{background:#fffdf8;max-width:850px;width:100%;padding:40px;border-radius:20px;max-height:90vh;overflow:auto;position:relative}
+.close{position:absolute;right:20px;top:15px;font-size:30px;cursor:pointer}
+h2{color:#8b6f47;margin-bottom:20px}
+#content{font-size:1.3rem;line-height:2}
+.polaroid{
+    display:none;
+
+    background:white;
+
+    width:280px;
+
+    padding:10px 10px 40px;
+
+    margin:0 auto 25px;
+
+    box-shadow:
+    0 10px 25px rgba(0,0,0,.15);
+
+    transform:rotate(-2deg);
+
+    transition:.3s;
+}
+
+.polaroid:hover{
+    transform:rotate(0deg) scale(1.02);
+}
+
+.polaroid img{
+    width:100%;
+    max-height:300px;
+    height:auto;
+    object-fit:contain;
+    display:block;
+    border-radius:4px;
+    background:#f5f5f5;
+}
+
+.polaroid p{
+    text-align:center;
+    margin-top:12px;
+    color:#555;
+}
+@media(max-width:768px){
+
+    .polaroid{
+        width:220px;
+        padding:8px 8px 30px;
+    }
+
+    .polaroid img{
+        height:170px;
+    }
+
+}
+</style>
+</head>
+<body>
+<header>
+<h1>TWENTY MONTHS</h1>
+<p class="subtitle">Twenty chapters. One beautiful story.</p>
+<div class="counter">
+<div id="daysTogether">0</div>
+<small>Days Together</small>
+</div>
+</header>
+
+<div class="gallery" id="gallery"></div>
+
+<div class="modal" id="modal">
+<div class="letter-box">
+<span class="close" onclick="closeLetter()">&times;</span>
+<h2 id="title"></h2>
+<div class="polaroid" id="polaroid">
+<img id="photo" src="">
+<p>A favorite memory.</p>
+</div>
+<div id="content"></div>
+</div>
+</div>
+
+<script>
+    
+const letters = {
+
+1:`Hi Love,
+First chapter.
+Honestly, hindi ko talaga in-expect na magiging ganito tayo katagal.
+Thank you for saying yes and for giving us a chance.
+Best decision ko talaga ang piliin ka.
+
+Happy first chapter. ❤️`,
+
+2:`Hi Love,
+
+Two months na tayo.
+
+Unti-unti na kitang nakikilala, pati mga little things tungkol sa'yo.
+
+Mas lalo kitang naa-appreciate every single day.
+
+I'm really happy na ikaw yung kasama ko.
+
+❤️`,
+
+3:`Hi Love,
+
+Three months na pala.
+
+Ang dami na nating memories kahit simpleng gala, kwentuhan, at tawanan lang.
+
+Those simple moments became my favorite moments kasi ikaw yung kasama ko.
+
+❤️`,
+
+4:`Hi Love,
+
+Hindi naman laging perfect yung relationship natin.
+
+Nagkakatampuhan tayo minsan, may misunderstandings din.
+
+Pero ang importante, hindi tayo sumusuko sa isa't isa.
+
+Thank you for always choosing us.
+
+❤️`,
+
+5:`Hi Love,
+
+Every time na nakikita ko itong picture na 'to, napapangiti ako.
+This is the first time na magkasama tayong gagala sa mall at first time ko makanood ng sine.
+Naalala ko kung gaano tayo kasaya that day.
+
+Sana dumami pa yung ganitong memories natin.
+
+❤️`,
+
+6:`Hi Love,
+
+Favorite ko talaga yung smile mo.
+
+Hindi mo siguro alam pero ang bilis gumaan ng araw ko kapag nakikita kitang masaya.
+
+Keep smiling, okay?
+
+❤️`,
+
+7:`Hi Love,
+
+Thank you kasi lagi kang naniniwala sa akin.
+
+Kapag feeling ko hindi ko kaya, ikaw yung isa sa mga reasons bakit gusto kong magpatuloy.
+
+Salamat sa support mo palagi.
+
+❤️`,
+
+8:`Hi Love,
+
+Busy man tayo minsan, hindi naman nababawasan yung love ko for you.
+
+Kahit gaano ka-hectic yung araw, ikaw pa rin yung gusto kong kausap bago matulog.
+
+❤️`,
+
+9:`Hi Love,
+
+Hanggang ngayon, kinikilig pa rin ako kapag nagno-notify yung phone ko tapos ikaw yung nag-message.
+
+Parang simple lang, pero iba pa rin talaga kapag galing sa'yo.
+
+❤️`,
+
+10:`Hi Love,
+First Birthday mo na kasama kita.
+Halfway na tayo.
+Parang ang bilis ng panahon.
+
+Kung babalik ako sa simula, ikaw pa rin yung pipiliin ko.
+
+No second thoughts.
+
+❤️`,
+
+11:`Hi Love,
+
+I just want you to know na sobrang proud ako sa'yo.
+
+Nakikita ko lahat ng efforts mo kahit minsan hindi mo napapansin.
+
+Keep going.
+
+I'm always here for you.
+
+❤️`,
+
+12:`Hi Love,
+
+One year plus na tayo.
+
+Hindi man tayo perfect, proud ako sa journey natin.
+
+Thank you for staying.
+
+Thank you for choosing me every day.
+
+❤️`,
+
+13:`Hi Love,
+
+You know what I realized?
+
+Hindi naman kailangan ng grand dates or expensive gifts para sumaya ako.
+
+As long as ikaw yung kasama ko, okay na ako.
+
+Kahit simpleng lakad, kwentuhan, o pagkain lang sa labas, enough na yun para maging favorite part ng araw ko.
+
+Thank you for making ordinary days feel so special.
+
+❤️`,
+
+14:`Hi Love,
+
+Minsan naiisip ko yung future.
+
+And honestly...
+
+Ikaw agad yung naiimagine ko.
+
+I hope one day, lahat ng mga plano natin matupad.
+
+Together.
+
+❤️`,
+
+15:`Hi Love,
+Our first mall in gapan kasama ang family mo.
+
+Thank you sa patience mo.
+
+Alam kong minsan matigas ulo ko at may mga times na nakakapagod akong intindihin.
+
+Pero nandiyan ka pa rin.
+
+Thank you for loving me kahit ganon.
+
+❤️`,
+
+16:`Hi Love,
+
+You always make me want to become a better person.
+
+Not because you asked me to...
+
+But because you deserve the best version of me.
+
+❤️`,
+
+17:`Hi Love,
+
+Hindi ko alam kung anong challenges pa yung darating.
+
+Pero one thing is for sure...
+
+I'll always choose you.
+
+Every single time.
+
+❤️`,
+
+18:`Hi Love,
+
+Thank you sa lahat ng efforts mo.
+
+Sa oras mo.
+
+Sa pag-aalaga mo.
+
+Sa pagmamahal mo.
+
+I may not say it often, but I appreciate everything you do.
+
+❤️`,
+
+19:`Hi Love,
+
+Almost twenty months na tayo.
+
+Ang dami na nating pinagdaanan.
+
+At sa bawat buwan na lumilipas, mas lalo kong nare-realize na ang swerte ko kasi ikaw yung girlfriend ko.
+
+❤️`,
+
+20:`Hi Love,
+
+Happy 20th Monthsary. ❤️
+
+Twenty months...
+
+Ang dami na nating memories, tawanan, tampuhan, at kwentuhan.
+
+Thank you for staying beside me through everything.
+
+Thank you for loving me.
+Thank you for making life so much happier.
+
+I'm excited sa lahat ng chapters na susunod pa.
+
+I love you, always.
+
+Forever us. ❤️`
+};
+
+for(let i=1;i<=20;i++){
+
+}
+
+const photos={5:'img1.jpg',10:'img2.jpg',15:'img3.jpg',20:'img4.jpg'};
+
+const gallery=document.getElementById('gallery');
+for(let i=1;i<=20;i++){
+ const card=document.createElement('div');
+ card.className='card';
+ card.innerHTML='Chapter '+String(i).padStart(2,'0');
+ card.onclick=()=>openLetter(i);
+ gallery.appendChild(card);
+}
+
+function typeWriter(text){
+ const content=document.getElementById('content');
+ content.innerHTML='';
+ let i=0;
+ function t(){
+   if(i<text.length){
+      content.innerHTML += text.charAt(i)==='\n' ? '<br>' : text.charAt(i);
+      i++;
+      setTimeout(t,15);
+   }
+ }
+ t();
+}
+
+function openLetter(num){
+ document.getElementById('modal').style.display='flex';
+ document.getElementById('title').textContent='Chapter '+String(num).padStart(2,'0');
+
+ const pol=document.getElementById('polaroid');
+ if(photos[num]){
+   document.getElementById('photo').src=photos[num];
+   pol.style.display='block';
+ }else{
+   pol.style.display='none';
+ }
+
+ typeWriter(letters[num]);
+}
+
+function closeLetter(){
+ document.getElementById('modal').style.display='none';
+}
+
+const start=new Date('2024-09-29');
+const now=new Date();
+const days=Math.floor((now-start)/(1000*60*60*24));
+document.getElementById('daysTogether').textContent=days;
+</script>
+</body>
+</html>
